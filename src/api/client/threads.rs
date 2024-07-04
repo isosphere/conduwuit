@@ -24,7 +24,7 @@ pub(crate) async fn get_threads_route(body: Ruma<get_threads::v1::Request>) -> R
 		u64::MAX
 	};
 
-	let threads = services()
+	let mut threads = services()
 		.rooms
 		.threads
 		.threads_until(sender_user, &body.room_id, from, &body.include)?
@@ -38,6 +38,8 @@ pub(crate) async fn get_threads_route(body: Ruma<get_threads::v1::Request>) -> R
 				.unwrap_or(false)
 		})
 		.collect::<Vec<_>>();
+
+	threads.sort_by(|(_, a), (_, b)| a.event_id.cmp(&b.event_id));
 
 	let next_batch = threads.last().map(|(count, _)| count.to_string());
 
