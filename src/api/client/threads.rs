@@ -39,7 +39,7 @@ pub(crate) async fn get_threads_route(body: Ruma<get_threads::v1::Request>) -> R
 		})
 		.collect::<Vec<_>>();
 
-	threads.sort_by(|(_, a), (_, b)| a.origin_server_ts.cmp(&b.origin_server_ts));
+	threads.sort_unstable_by(|(_, a), (_, b)| a.origin_server_ts.cmp(&b.origin_server_ts).reverse());
 
 	let next_batch = threads.last().map(|(count, _)| count.to_string());
 
